@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>High-Speed Heist: Classroom 7x Action</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: #eee; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; overflow-x: hidden; }
+        #gameCanvas { background: #333; display: block; margin: 20px auto; border: 4px solid #555; touch-action: none; max-width: 95%; height: auto; cursor: pointer; }
+        .article-container { max-width: 800px; margin: 20px auto; padding: 20px; text-align: left; line-height: 1.6; background: #222; border-radius: 8px; }
+        h1, h2 { color: #ffcc00; }
+        .stats { font-size: 24px; font-weight: bold; margin-top: 10px; color: #00ff00; }
+        .controls-hint { font-size: 14px; color: #aaa; margin-bottom: 10px; }
+        
+        /* CTA Button Section */
+        .cta-box { border: 2px dashed #4caf50; border-radius: 20px; padding: 25px; margin: 20px auto; max-width: 700px; background: #222; text-align: center; }
+        .cta-text { font-size: 18px; margin-bottom: 15px; font-weight: bold; }
+        .cta-btn { background-color: #4caf50; color: white; padding: 15px 35px; text-decoration: none; border-radius: 40px; font-size: 22px; font-weight: bold; display: inline-block; transition: 0.3s; }
+        .cta-btn:hover { background-color: #45a049; transform: scale(1.05); }
+        a { color: #4caf50; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="article-container">
+        <h1>High-Speed Heist: The Ultimate Chase</h1>
+        <h3>About This Game</h3>
+        <p>
+            High-Speed Heist is a fast-paced action game where you play as a driver trying to escape a busy city. After a big bank job, the police are on your tail, and you must weave through traffic to stay free.
+        </p>
+    </div>
+
+    <div class="stats">Score: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="cta-box">
+        <div class="cta-text">🚀 Want to Play More Awesome Games?</div>
+        <p>We have a huge list of unblocked games waiting for you!</p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span>👉</span>
+            <a href="https://www.classroom-7x.com/" class="cta-btn">Play More classroom Games Here</a>
+            <span>👈</span>
+        </div>
+    </div>
+
+    <div class="article-container">
+        <h2>Why You Should Play Unblocked Games</h2>
+        <p>
+Let's be honest, school and office breaks can be super boring. Sometimes you just want to play a quick game to refresh your mind. But most fun sites are usually blocked by the network. That is where <a href="https://www.classroom-7x.com/"><strong>Classroom 7x</strong></a> comes to the rescue!
+        </p>
+        <p>
+            I personally love playing games on Classroom 7x because they load fast and you don't need a high-end PC. Whether you like racing or sports unblocked games, it’s all there. 
+        </p>
+        <p>
+            This <strong>High-Speed Heist</strong> game is a great example of the simple yet addictive games you can find. It’s all about focus and quick reflexes. If you enjoy this type of action, you should definitely check out more unblocked games on the web. It's the perfect way to kill time safely and legally. Stay safe and keep gaming!
+        </p>
+    </div>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreElement = document.getElementById("score");
+    canvas.width = 360; canvas.height = 500;
+    let score = 0; let gameActive = true;
+    const player = { x: 155, y: 400, w: 50, h: 80, speed: 7 };
+    const enemies = [];
+    const keys = {};
+    window.addEventListener("keydown", (e) => keys[e.code] = true);
+    window.addEventListener("keyup", (e) => keys[e.code] = false);
+
+    canvas.addEventListener("touchstart", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        if (touchX < canvas.width / 2) keys["ArrowLeft"] = true;
+        else keys["ArrowRight"] = true;
+    }, {passive: false});
+    canvas.addEventListener("touchend", () => { keys["ArrowLeft"] = false; keys["ArrowRight"] = false; });
+
+    function createEnemy() {
+        if (!gameActive) return;
+        const x = Math.random() * (canvas.width - 50);
+        enemies.push({ x: x, y: -100, w: 45, h: 75, speed: 4 + (score / 200) });
+    }
+    setInterval(createEnemy, 1200);
+
+    function update() {
+        if (!gameActive) return;
+        if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
+        if (keys["ArrowRight"] && player.x < canvas.width - player.w) player.x += player.speed;
+        enemies.forEach((enemy, index) => {
+            enemy.y += enemy.speed;
+            if (player.x < enemy.x + enemy.w && player.x + player.w > enemy.x &&
+                player.y < enemy.y + enemy.h && player.y + player.h > enemy.y) {
+                gameActive = false; alert("Game Over! Score: " + score); location.reload();
+            }
+            if (enemy.y > canvas.height) { enemies.splice(index, 1); score += 10; scoreElement.innerText = score; }
+        });
+    }
+
+    function draw() {
+        ctx.fillStyle = "#333"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "white"; ctx.setLineDash([20, 20]); ctx.beginPath();
+        ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+        ctx.fillStyle = "#00acee"; ctx.fillRect(player.x, player.y, player.w, player.h);
+        enemies.forEach(enemy => { ctx.fillStyle = "#ff4444"; ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h); });
+        update(); if (gameActive) requestAnimationFrame(draw);
+    }
+    draw();
+</script>
+</body>
+</html>
